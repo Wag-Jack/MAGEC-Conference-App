@@ -1,41 +1,30 @@
-import {StyleSheet, Text, View, Image} from 'react-native'
-import {Link} from 'expo-router'
-import Logo from '../assets/img/magec.png'
+import {useEffect} from 'react'
+import {useRouter} from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const Home = () => {
-    return(
-        <View style={styles.container}>
-            <Image source={Logo} style={styles.img}/>
-            
-            <Text style={styles.title}>MAGEC Presents</Text>
+const Index = () => {
+    const router = useRouter()
+    const ttlMs = 7 * 24 * 60 * 60 * 1000
 
-            <Text style={{ marginTop: 10, marginBottom: 30 }}>
-                MAMUN 2026
-            </Text>
+    useEffect(() => {
+        const checkKey = async () => {
+            const storedAt = await AsyncStorage.getItem('conference_code_validated_at')
+            if (!storedAt) {
+                router.replace('/enter_key')
+                return
+            }
+            const age = Date.now() - Number(storedAt)
+            if (age > ttlMs) {
+                await AsyncStorage.removeItem('conference_code_validated_at')
+                router.replace('/enter_key')
+                return
+            }
+            router.replace('/(tabs)/schedule')
+        }
+        checkKey()
+    }, [router, ttlMs])
 
-            <Link href="/about" styles={styles.link}>About</Link>
-        </View>
-    )
+    return null
 }
 
-export default Home
-
-const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#e0dfe8',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    title: {
-        fontWeight: 'bold',
-        fontSize: 18
-    },
-    img: {
-        marginVertical: 20,
-    },
-    link: {
-        marginVertical: 10,
-        borderBottomWidth: 1
-    }
-})
+export default Index
