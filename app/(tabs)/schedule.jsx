@@ -1,17 +1,22 @@
 import {useEffect, useState} from 'react'
 import {ActivityIndicator, FlatList, StyleSheet, Text, View} from 'react-native'
+import {useFonts} from 'expo-font'
 import {supabase} from '../../lib/supabase'
+import { format, formatDistanceToNow } from 'date-fns';
 
 const Schedule = () => {
     const [items, setItems] = useState([])
     const [loading, setLoading] = useState(true)
+    const [fontsLoaded] = useFonts({
+        GillSans: require('../../assets/fonts/Gill Sans.otf'),
+    })
 
     useEffect(() => {
         const load = async () => {
             try {
                 const {data, error} = await supabase
                     .from('schedule')
-                    .select('id,title,start_time,end_time,location,description')
+                    .select('*')
                     .order('start_time', {ascending: true})
 
                 if (error) {
@@ -27,7 +32,7 @@ const Schedule = () => {
         load()
     }, [])
 
-    if (loading) {
+    if (loading || !fontsLoaded) {
         return (
             <View style={styles.center}>
                 <ActivityIndicator />
@@ -44,7 +49,7 @@ const Schedule = () => {
                 <View style={styles.card}>
                     <Text style={styles.title}>{item.title}</Text>
                     <Text style={styles.meta}>
-                        {item.start_time} - {item.end_time}
+                        {format(item.start_time, "MMMM do")} | {format(item.start_time, "h:mma")} - {format(item.end_time, "h:mma")}
                     </Text>
                     {item.location ? <Text style={styles.meta}>{item.location}</Text> : null}
                     {item.description ? <Text style={styles.desc}>{item.description}</Text> : null}
@@ -77,15 +82,18 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         marginBottom: 4,
+        fontFamily: 'GillSans',
     },
     meta: {
         color: '#3c3c3c',
         fontSize: 13,
+        fontFamily: 'GillSans',
     },
     desc: {
         marginTop: 6,
         color: '#3c3c3c',
         fontSize: 14,
+        fontFamily: 'GillSans',
     },
     center: {
         flex: 1,
@@ -95,5 +103,21 @@ const styles = StyleSheet.create({
     },
     empty: {
         color: '#3c3c3c',
+        fontFamily: 'GillSans',
+    },
+    debugBanner: {
+        backgroundColor: '#fff7d6',
+        borderWidth: 1,
+        borderColor: '#f2d97a',
+        borderRadius: 8,
+        paddingVertical: 6,
+        paddingHorizontal: 10,
+        marginBottom: 12,
+    },
+    debugText: {
+        color: '#6a5300',
+        fontSize: 12,
+        fontWeight: '600',
+        fontFamily: 'GillSans',
     },
 })

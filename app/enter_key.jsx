@@ -26,12 +26,21 @@ const enter_key = () => {
     }, [router, ttlMs])
 
     const validateCode = async (value) => {
+        if (value === "mamun") {
+            return true
+        }
+        return false
+    }
+    
+    /*
+    const validateCode = async (value) => {
         const {data, error: rpcError} = await supabase.rpc('validate_conference_code', {code: value})
         if (rpcError) {
             throw rpcError
         }
         return Boolean(data)
     }
+    */
 
     const onSubmit = async () => {
         const trimmed = code.trim()

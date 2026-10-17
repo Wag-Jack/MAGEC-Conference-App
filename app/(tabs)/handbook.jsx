@@ -1,36 +1,47 @@
-import {useState} from 'react'
-import {Pressable, StyleSheet, Text, View} from 'react-native'
-import * as WebBrowser from 'expo-web-browser'
+import {useEffect, useState} from 'react'
+import {ActivityIndicator, StyleSheet, Text, View} from 'react-native'
 import {Asset} from 'expo-asset'
+import {WebView} from 'react-native-webview'
 
-import HandbookPdf from '../../assets/handbook.pdf'
+import HandbookPdf from '../../assets/MAMUN Handbook 2025 Final.pdf'
 
 const Handbook = () => {
-    const [opening, setOpening] = useState(false)
+    const [pdfUri, setPdfUri] = useState(null)
+    const [loading, setLoading] = useState(true)
 
-    const openPdf = async () => {
-        setOpening(true)
+    const loadPdf = async () => {
         try {
             const asset = Asset.fromModule(HandbookPdf)
             await asset.downloadAsync()
             const uri = asset.localUri ?? asset.uri
-            await WebBrowser.openBrowserAsync(uri)
+            setPdfUri(uri)
         } finally {
-            setOpening(false)
+            setLoading(false)
         }
     }
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Conference Handbook</Text>
-            <Text style={styles.body}>
-                Tap below to open the handbook PDF.
-            </Text>
-            <Pressable style={styles.button} onPress={openPdf} disabled={opening}>
-                <Text style={styles.buttonText}>{opening ? 'Opening...' : 'Open PDF'}</Text>
-            </Pressable>
-        </View>
-    )
+    useEffect(() => {
+        loadPdf()
+    }, [])
+
+    if (loading) {
+        return (
+            <View style={styles.center}>
+                <ActivityIndicator />
+                <Text style={styles.body}>Loading handbook...</Text>
+            </View>
+        )
+    }
+
+    if (!pdfUri) {
+        return (
+            <View style={styles.center}>
+                <Text style={styles.body}>Unable to load handbook.</Text>
+            </View>
+        )
+    }
+
+    return <WebView source={{uri: pdfUri}} style={styles.webview} />
 }
 
 export default Handbook
@@ -41,23 +52,17 @@ const styles = StyleSheet.create({
         padding: 24,
         justifyContent: 'center',
     },
-    title: {
-        fontSize: 18,
-        fontWeight: '600',
-        marginBottom: 8,
-    },
     body: {
         color: '#3c3c3c',
-        marginBottom: 16,
+        marginTop: 10,
     },
-    button: {
-        backgroundColor: '#4a90e2',
-        borderRadius: 8,
-        paddingVertical: 12,
+    center: {
+        flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
+        padding: 24,
     },
-    buttonText: {
-        color: '#fff',
-        fontWeight: '600',
+    webview: {
+        flex: 1,
     },
 })

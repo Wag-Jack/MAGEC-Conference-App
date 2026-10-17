@@ -1,9 +1,17 @@
+const magec_navy = '#080066';
+const dark_gray = '#545454';
+const un_blue = '#648fca';
+const green_accent = '#337357';
+
+export default {
+  light: {
+    text: magec_navy,
+    
+  }
+};
+
 export const Colors = {
-  // Brand + accents
-  primary: "#0b1f3a", // MAGEC Navy
-  accent: "#4a90e2", // Bright/UN blue
-  accent2Green: "#2eae6e",
-  accent2Purple: "#6a4c93",
+  primary: "#6849a7",
   warning: "#cc475a",
   
   dark: {
@@ -16,12 +24,12 @@ export const Colors = {
     uiBackground: "#2f2b3d",
   },
   light: {
-    title: "#0b1f3a", // MAGEC Navy
-    text: "#3c3c3c", // Dark Grey (Charcoal)
-    background: "#f4f6f8",
-    navBackground: "#eef1f4",
-    iconColor: "#3c3c3c",
-    iconColorFocused: "#0b1f3a",
-    uiBackground: "#e6ebf0",
+    text: "#625f72",
+    title: "#201e2b",
+    background: "#e0dfe8",
+    navBackground: "#e8e7ef",
+    iconColor: "#686477",
+    iconColorFocused: "#201e2b",
+    uiBackground: "#d6d5e1",
   },
 }
